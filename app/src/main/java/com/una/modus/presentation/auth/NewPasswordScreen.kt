@@ -21,11 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.una.modus.presentation.common.components.AuthTextField
 import com.una.modus.presentation.common.components.BackTopButton
 import com.una.modus.presentation.common.components.PrimaryGradientButton
+import com.una.modus.ui.theme.ModusAppTheme
 import com.una.modus.ui.theme.ModusBackgroundGradient
 import com.una.modus.ui.theme.ModusLink
 import com.una.modus.ui.theme.ModusText
@@ -126,5 +128,13 @@ private fun RequirementRow(text: String, met: Boolean) {
                 .background(if (met) ModusLink else ModusTextMuted)
         )
         Text(text = text, color = ModusTextMuted, fontSize = 12.5.sp)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NewPasswordScreenPreview() {
+    ModusAppTheme {
+        NewPasswordScreen()
     }
 }
