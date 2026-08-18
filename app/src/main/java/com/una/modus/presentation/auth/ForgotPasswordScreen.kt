@@ -28,76 +28,58 @@ import com.una.modus.ui.theme.ModusText
 import com.una.modus.ui.theme.ModusTextMuted
 
 /**
- * Pantalla de Login
+ * Pantalla de Recuperar contraseña
  *
- * Permite al estudiante autenticarse con su correo institucional y
- * contraseña. Es puramente visual: valida y guarda el texto ingresado en
- * estado local, pero no llama a ningún backend todavía (no existe capa de
- * dominio/datos implementada aún).
+ * Primer paso del flujo de recuperación: el usuario ingresa su correo
+ * institucional para recibir un enlace de restablecimiento. En este
+ * prototipo (sin backend) "Enviar enlace" avanza directamente a
+ * [NewPasswordScreen] en vez de esperar un correo real.
  *
  * @param onBack se invoca al presionar el botón de volver.
- * @param onLoginSuccess se invoca al presionar "Ingresar".
- * @param onForgotPassword se invoca al presionar "¿Olvidaste tu contraseña?".
- * @param onNavigateToRegister se invoca al presionar "Registrate".
+ * @param onLinkSent se invoca al presionar "Enviar enlace".
+ * @param onBackToLogin se invoca al presionar "Volver a iniciar sesión".
  */
 @Composable
-fun LoginScreen(
+fun ForgotPasswordScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
-    onLoginSuccess: () -> Unit = {},
-    onForgotPassword: () -> Unit = {},
-    onNavigateToRegister: () -> Unit = {}
+    onLinkSent: () -> Unit = {},
+    onBackToLogin: () -> Unit = {}
 ) {
-    // Estado local del formulario (sin validación de negocio todavía).
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(ModusBackgroundGradient)
-            // Scroll vertical: en pantallas chicas o con letra grande el
-            // contenido puede no entrar completo; sin esto quedaría cortado.
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 28.dp, vertical = 66.dp),
+            .padding(horizontal = 28.dp, vertical = 46.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         BackTopButton(onClick = onBack)
         Text(
-            text = "Bienvenido",
+            text = "Recuperar contraseña",
             color = ModusText,
             fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = "Ingresá con tu correo institucional",
+            text = "Escribí tu correo institucional y te enviamos un enlace para restablecerla.",
             color = ModusTextMuted,
             fontSize = 14.5.sp,
             fontWeight = FontWeight.Medium
         )
         AuthTextField(
-            label = "Correo",
+            label = "Correo institucional",
             value = email,
             onValueChange = { email = it },
             placeholder = "usuario@est.una.ac.cr",
             keyboardType = KeyboardType.Email
         )
-        AuthTextField(
-            label = "Contraseña",
-            value = password,
-            onValueChange = { password = it },
-            placeholder = "••••••••",
-            isPassword = true
-        )
+        PrimaryGradientButton(text = "Enviar enlace", onClick = onLinkSent)
         LinkText(
-            text = "¿Olvidaste tu contraseña?",
-            onClick = onForgotPassword,
-            textAlign = TextAlign.End
-        )
-        PrimaryGradientButton(text = "Ingresar", onClick = onLoginSuccess)
-        LinkText(
-            text = "¿No tenés cuenta? Registrate",
-            onClick = onNavigateToRegister,
+            text = "Volver a iniciar sesión",
+            onClick = onBackToLogin,
             textAlign = TextAlign.Center
         )
     }
