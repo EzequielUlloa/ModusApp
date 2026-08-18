@@ -38,3 +38,13 @@ val ModusProgressTrack = Color(0xFF3D5636)
 // Color del tab activo en la barra de navegación inferior ("Inicio"/"Perfil"
 // resaltados en Figma con un lila más claro que el resto de los íconos).
 val ModusPrimaryText = Color(0xFFBEACFF)
+
+/**
+ * Paleta Modus · Onboarding (modo oscuro)
+ *
+ * Tokens adicionales extraídos de la sección "OSCURO · Onboarding" de
+ * Figma, usados solo en las formas decorativas de las ilustraciones de
+ * bienvenida.
+ */
+val ModusIllustrationPrimary = Color(0xFF826CF6)
+val ModusIllustrationDeepGreen = Color(0xFF3FA850)
