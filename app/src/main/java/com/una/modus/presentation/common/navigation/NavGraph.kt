@@ -13,8 +13,11 @@ import com.una.modus.presentation.auth.NewPasswordScreen
 import com.una.modus.presentation.auth.RegisterScreen
 import com.una.modus.presentation.auth.VerifyEmailScreen
 import com.una.modus.presentation.common.SplashScreen
+import com.una.modus.presentation.lists.CursosScreen
 import com.una.modus.presentation.lists.GenericListScreen
+import com.una.modus.presentation.menu.AvisosScreen
 import com.una.modus.presentation.menu.HomeScreen
+import com.una.modus.presentation.menu.PerfilScreen
 
 /**
  * Rutas de la app
@@ -33,6 +36,9 @@ sealed class Screen(val route: String) {
     data object ForgotPassword : Screen("forgot_password")
     data object NewPassword : Screen("new_password")
     data object Home : Screen("home")
+    data object Cursos : Screen("cursos")
+    data object Avisos : Screen("avisos")
+    data object Perfil : Screen("perfil")
     data object GenericList : Screen("list")
 }
 
@@ -54,6 +60,20 @@ fun ModusNavGraph(
     navController: NavHostController = rememberNavController(),
     startDestination: String = Screen.Splash.route
 ) {
+    // Navegación entre pestañas de la barra inferior: conserva a Home en el
+    // fondo del stack (saveState/restoreState) para que cambiar de pestaña
+    // no acumule copias ni pierda el scroll/estado de las que ya se visitaron.
+    val navigateToTab: (String) -> Unit = { route ->
+        navController.navigate(route) {
+            popUpTo(Screen.Home.route) {
+                saveState = true
+                inclusive = route == Screen.Home.route
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -123,7 +143,43 @@ fun ModusNavGraph(
             )
         }
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onNavigateCursos = { navigateToTab(Screen.Cursos.route) },
+                onNavigateAvisos = { navigateToTab(Screen.Avisos.route) },
+                onNavigatePerfil = { navigateToTab(Screen.Perfil.route) },
+                onCapturar = { navController.navigate(Screen.GenericList.route) },
+                onCourseClick = { navController.navigate(Screen.GenericList.route) }
+            )
+        }
+        composable(Screen.Cursos.route) {
+            CursosScreen(
+                onNavigateInicio = { navigateToTab(Screen.Home.route) },
+                onNavigateAvisos = { navigateToTab(Screen.Avisos.route) },
+                onNavigatePerfil = { navigateToTab(Screen.Perfil.route) },
+                onCapturar = { navController.navigate(Screen.GenericList.route) }
+            )
+        }
+        composable(Screen.Avisos.route) {
+            AvisosScreen(
+                onNavigateInicio = { navigateToTab(Screen.Home.route) },
+                onNavigateCursos = { navigateToTab(Screen.Cursos.route) },
+                onNavigatePerfil = { navigateToTab(Screen.Perfil.route) },
+                onCapturar = { navController.navigate(Screen.GenericList.route) }
+            )
+        }
+        composable(Screen.Perfil.route) {
+            PerfilScreen(
+                onBack = { navController.popBackStack() },
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                },
+                onNavigateInicio = { navigateToTab(Screen.Home.route) },
+                onNavigateCursos = { navigateToTab(Screen.Cursos.route) },
+                onNavigateAvisos = { navigateToTab(Screen.Avisos.route) },
+                onCapturar = { navController.navigate(Screen.GenericList.route) }
+            )
         }
         composable(Screen.GenericList.route) {
             GenericListScreen()

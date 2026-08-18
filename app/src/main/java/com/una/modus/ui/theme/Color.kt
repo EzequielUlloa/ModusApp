@@ -34,3 +34,7 @@ val ModusAccentGradientStart = Color(0xFF7DF09B)
 val ModusAccentGradientEnd = Color(0xFF3FCB74)
 val ModusOnAccent = Color(0xFF0B1A11)
 val ModusProgressTrack = Color(0xFF3D5636)
+
+// Color del tab activo en la barra de navegación inferior ("Inicio"/"Perfil"
+// resaltados en Figma con un lila más claro que el resto de los íconos).
+val ModusPrimaryText = Color(0xFFBEACFF)
