@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,19 +34,16 @@ import com.una.modus.ui.theme.ModusText
 import com.una.modus.ui.theme.ModusTextMuted
 
 /**
- * Campo de formulario de autenticación
+ * Campo de formulario de autenticación.
  *
- * Campo de texto de marca (label arriba + caja redondeada) reutilizado en
- * todos los formularios de Login, Registro y recuperación de contraseña.
- * Cuando [isPassword] es `true`, agrega un ícono de ojo para alternar la
- * visibilidad del texto ingresado (estado manejado internamente).
+ * Campo de texto reutilizable para Login, Registro y recuperación
+ * de contraseña.
  *
- * @param label texto de la etiqueta mostrada arriba del campo.
- * @param value valor actual del campo (estado elevado al llamador).
- * @param onValueChange callback invocado con el nuevo valor al escribir.
- * @param placeholder texto de ejemplo mostrado cuando [value] está vacío.
- * @param isPassword si es `true`, oculta el texto y muestra el botón de mostrar/ocultar.
- * @param keyboardType tipo de teclado a mostrar (texto, correo, etc.).
+ * Cuando [isPassword] es true, muestra un botón para alternar la
+ * visibilidad de la contraseña.
+ *
+ * Si [errorMessage] contiene texto, el mensaje se muestra debajo
+ * del campo.
  */
 @Composable
 fun AuthTextField(
@@ -55,18 +53,32 @@ fun AuthTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     isPassword: Boolean = false,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    errorMessage: String? = null
 ) {
-    // Visibilidad de la contraseña: solo aplica si isPassword = true.
     var isVisible by remember { mutableStateOf(false) }
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(text = label, color = ModusTextMuted, fontSize = 12.5.sp)
+
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = label,
+            color = ModusTextMuted,
+            fontSize = 12.5.sp
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 6.dp)
-                .background(ModusSurface, RoundedCornerShape(16.dp))
-                .padding(horizontal = 18.dp, vertical = 17.dp),
+                .background(
+                    color = ModusSurface,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(
+                    horizontal = 18.dp,
+                    vertical = 17.dp
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             BasicTextField(
@@ -74,31 +86,70 @@ fun AuthTextField(
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f),
                 singleLine = true,
-                textStyle = LocalTextStyle.current.copy(color = ModusText, fontSize = 14.5.sp),
+                textStyle = LocalTextStyle.current.copy(
+                    color = ModusText,
+                    fontSize = 14.5.sp
+                ),
                 cursorBrush = SolidColor(ModusText),
-                visualTransformation = if (isPassword && !isVisible) {
-                    PasswordVisualTransformation()
-                } else {
-                    VisualTransformation.None
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-                // Placeholder dibujado a mano: BasicTextField no lo trae incluido.
+                visualTransformation =
+                    if (isPassword && !isVisible) {
+                        PasswordVisualTransformation()
+                    } else {
+                        VisualTransformation.None
+                    },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = keyboardType
+                ),
                 decorationBox = { innerTextField ->
+
                     if (value.isEmpty()) {
-                        Text(text = placeholder, color = ModusTextMuted, fontSize = 14.5.sp)
+                        Text(
+                            text = placeholder,
+                            color = ModusTextMuted,
+                            fontSize = 14.5.sp
+                        )
                     }
+
                     innerTextField()
                 }
             )
+
             if (isPassword) {
-                IconButton(onClick = { isVisible = !isVisible }) {
+                IconButton(
+                    onClick = {
+                        isVisible = !isVisible
+                    }
+                ) {
                     Icon(
-                        imageVector = if (isVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                        contentDescription = null,
+                        imageVector =
+                            if (isVisible) {
+                                Icons.Filled.VisibilityOff
+                            } else {
+                                Icons.Filled.Visibility
+                            },
+                        contentDescription =
+                            if (isVisible) {
+                                "Ocultar contraseña"
+                            } else {
+                                "Mostrar contraseña"
+                            },
                         tint = ModusTextMuted
                     )
                 }
             }
+        }
+
+        errorMessage?.let { error ->
+
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.5.sp,
+                modifier = Modifier.padding(
+                    top = 6.dp,
+                    start = 4.dp
+                )
+            )
         }
     }
 }
