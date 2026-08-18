@@ -1,17 +1,26 @@
 package com.una.modus.ui.theme
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 /**
  * Gradiente de fondo
  *
- * Degradado diagonal (verde oscuro → morado oscuro) usado como fondo de
- * todas las pantallas del flujo de Acceso y cuenta en modo oscuro.
+ * Degradado diagonal usado como fondo de todas las pantallas del flujo de
+ * Acceso y cuenta: verde oscuro → morado oscuro en modo oscuro, o su
+ * espejo claro en modo claro (según [LocalModusColors]).
  */
-val ModusBackgroundGradient = Brush.linearGradient(
-    colors = listOf(ModusBgGradientStart, ModusBgGradientMid, ModusBgGradientEnd)
-)
+val ModusBackgroundGradient: Brush
+    @Composable
+    @ReadOnlyComposable
+    get() {
+        val palette = LocalModusColors.current
+        return Brush.linearGradient(
+            colors = listOf(palette.bgGradientStart, palette.bgGradientMid, palette.bgGradientEnd)
+        )
+    }
 
 /**
  * Gradiente de botón primario

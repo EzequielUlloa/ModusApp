@@ -29,18 +29,23 @@ import com.una.modus.ui.theme.ModusText
  */
 @Composable
 fun CourseProgressRing(progress: Int, modifier: Modifier = Modifier) {
+    // Se leen acá (en contexto @Composable) porque el bloque de Canvas se
+    // ejecuta en la fase de dibujo, donde no se puede leer un color/brush
+    // que dependa del tema (@Composable) directamente.
+    val trackColor = ModusProgressTrack
+    val progressBrush = ModusAccentGradient
     Box(modifier = modifier.size(44.dp), contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val stroke = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
             drawArc(
-                color = ModusProgressTrack,
+                color = trackColor,
                 startAngle = -90f,
                 sweepAngle = 360f,
                 useCenter = false,
                 style = stroke
             )
             drawArc(
-                brush = ModusAccentGradient,
+                brush = progressBrush,
                 startAngle = -90f,
                 sweepAngle = 360f * (progress.coerceIn(0, 100) / 100f),
                 useCenter = false,

@@ -8,46 +8,45 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 // Esquema de color oscuro de Modus, construido con los tokens de Color.kt.
-// Es el único esquema con la marca ya aplicada (el claro sigue pendiente).
 private val DarkColorScheme = darkColorScheme(
     primary = ModusButtonGradientStart,
     onPrimary = ModusOnPrimary,
-    secondary = ModusLink,
-    tertiary = Pink80,
-    background = ModusBgGradientMid,
-    onBackground = ModusText,
-    surface = ModusSurface,
-    onSurface = ModusText,
-    surfaceVariant = ModusSurface,
-    onSurfaceVariant = ModusTextMuted
+    secondary = ModusDarkPalette.link,
+    tertiary = ModusIllustrationPrimary,
+    background = ModusDarkPalette.bgGradientMid,
+    onBackground = ModusDarkPalette.text,
+    surface = ModusDarkPalette.surface,
+    onSurface = ModusDarkPalette.text,
+    surfaceVariant = ModusDarkPalette.surface,
+    onSurfaceVariant = ModusDarkPalette.textMuted
 )
 
-// Esquema de color claro: todavía usa la paleta morada de plantilla porque
-// el modo claro no se ha diseñado en Figma (fuera de alcance por ahora).
+// Esquema de color claro de Modus, espejo del oscuro con los mismos tokens
+// de marca (ver ModusLightPalette en Color.kt).
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = ModusButtonGradientStart,
+    onPrimary = ModusOnPrimary,
+    secondary = ModusLightPalette.link,
+    tertiary = ModusIllustrationPrimary,
+    background = ModusLightPalette.bgGradientMid,
+    onBackground = ModusLightPalette.text,
+    surface = ModusLightPalette.surface,
+    onSurface = ModusLightPalette.text,
+    surfaceVariant = ModusLightPalette.surface,
+    onSurfaceVariant = ModusLightPalette.textMuted
 )
 
 /**
  * Tema de la app Modus
  *
  * Envuelve el contenido de la app en un [MaterialTheme] con la paleta y
- * tipografía de Modus. Elige el esquema oscuro o claro según el tema del
+ * tipografía de Modus, y expone esa misma paleta a las pantallas vía
+ * [LocalModusColors] (de donde leen tokens como [ModusText] o
+ * [ModusSurface]). Elige el esquema oscuro o claro según el tema del
  * sistema, y deja el color dinámico (Material You) desactivado por
  * defecto para que la marca de Modus no sea reemplazada en Android 12+.
  *
@@ -70,10 +69,13 @@ fun ModusAppTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+    val modusColors = if (darkTheme) ModusDarkPalette else ModusLightPalette
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalModusColors provides modusColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
