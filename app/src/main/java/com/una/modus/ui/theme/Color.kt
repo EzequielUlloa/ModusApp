@@ -34,3 +34,13 @@ val ModusAccentGradientStart = Color(0xFF7DF09B)
 val ModusAccentGradientEnd = Color(0xFF3FCB74)
 val ModusOnAccent = Color(0xFF0B1A11)
 val ModusProgressTrack = Color(0xFF3D5636)
+
+/**
+ * Paleta Modus · Onboarding (modo oscuro)
+ *
+ * Tokens adicionales extraídos de la sección "OSCURO · Onboarding" de
+ * Figma, usados solo en las formas decorativas de las ilustraciones de
+ * bienvenida.
+ */
+val ModusIllustrationPrimary = Color(0xFF826CF6)
+val ModusIllustrationDeepGreen = Color(0xFF3FA850)
