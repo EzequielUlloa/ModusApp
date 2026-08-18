@@ -41,7 +41,7 @@ import com.una.modus.ui.theme.ModusTextMuted
  *
  * @param onBack se invoca al presionar el botón de volver.
  * @param onNext se invoca al presionar "Siguiente"; lleva a [OnboardingTeachingScreen].
- * @param onSkip se invoca al presionar "Saltar", saltando directo a Login.
+ * @param onSkip se invoca al presionar "Saltar", saltando directo a Home.
  */
 @Composable
 fun OnboardingMethodScreen(

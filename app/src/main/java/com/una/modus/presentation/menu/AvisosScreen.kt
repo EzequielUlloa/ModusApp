@@ -11,10 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.una.modus.presentation.common.components.BottomNavDestination
 import com.una.modus.presentation.common.components.ModusBottomNavBar
+import com.una.modus.presentation.lists.CursosScreen
+import com.una.modus.ui.theme.ModusAppTheme
 import com.una.modus.ui.theme.ModusBackgroundGradient
 import com.una.modus.ui.theme.ModusText
 import com.una.modus.ui.theme.ModusTextMuted
@@ -70,5 +73,13 @@ fun AvisosScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AvisosScreenPreview() {
+    ModusAppTheme {
+        AvisosScreen()
     }
 }

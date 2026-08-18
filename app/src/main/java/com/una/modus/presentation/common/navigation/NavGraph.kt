@@ -12,6 +12,9 @@ import com.una.modus.presentation.auth.login.LoginScreen
 import com.una.modus.presentation.auth.login.NewPasswordScreen
 import com.una.modus.presentation.auth.login.RegisterScreen
 import com.una.modus.presentation.auth.login.VerifyEmailScreen
+import com.una.modus.presentation.auth.onboarding.OnboardingMethodScreen
+import com.una.modus.presentation.auth.onboarding.OnboardingPhotoScreen
+import com.una.modus.presentation.auth.onboarding.OnboardingTeachingScreen
 import com.una.modus.presentation.common.SplashScreen
 import com.una.modus.presentation.lists.CursosScreen
 import com.una.modus.presentation.lists.GenericListScreen
@@ -33,6 +36,9 @@ sealed class Screen(val route: String) {
     data object Register : Screen("register")
     data object VerifyEmail : Screen("verify_email")
     data object AccountCreated : Screen("account_created")
+    data object OnboardingPhoto : Screen("onboarding_photo")
+    data object OnboardingMethod : Screen("onboarding_method")
+    data object OnboardingTeaching : Screen("onboarding_teaching")
     data object ForgotPassword : Screen("forgot_password")
     data object NewPassword : Screen("new_password")
     data object Home : Screen("home")
@@ -51,8 +57,9 @@ sealed class Screen(val route: String) {
  * lambdas `onXxx`, sin saber a qué ruta concreta llevan.
  *
  * Flujo implementado:
- * `Splash → Login ⇄ Registro → Verificar correo → Cuenta creada → Home`
- * y `Login → Recuperar contraseña → Nueva contraseña → Login`.
+ * `Splash → Login ⇄ Registro → Verificar correo → Cuenta creada → Onboarding
+ * (Foto → Método → Enseñanza) → Home` y `Login → Recuperar contraseña →
+ * Nueva contraseña → Login`.
  */
 @Composable
 fun ModusNavGraph(
@@ -67,7 +74,6 @@ fun ModusNavGraph(
         navController.navigate(route) {
             popUpTo(Screen.Home.route) {
                 saveState = true
-                inclusive = route == Screen.Home.route
             }
             launchSingleTop = true
             restoreState = true
@@ -93,7 +99,11 @@ fun ModusNavGraph(
         composable(Screen.Login.route) {
             LoginScreen(
                 onBack = { navController.popBackStack() },
-                onLoginSuccess = { navController.navigate(Screen.Home.route) },
+                onLoginSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
                 onForgotPassword = { navController.navigate(Screen.ForgotPassword.route) },
                 onNavigateToRegister = { navController.navigate(Screen.Register.route) }
             )
@@ -112,13 +122,48 @@ fun ModusNavGraph(
             )
         }
         // Cuenta creada: al presionar "Comenzar" se limpia todo el stack de
-        // auth hasta Login (inclusive) para que "atrás" desde Home cierre la app.
+        // auth hasta Login (inclusive) y se muestra el onboarding antes de Home.
         composable(Screen.AccountCreated.route) {
             AccountCreatedScreen(
                 onBack = { navController.popBackStack() },
                 onStart = {
-                    navController.navigate(Screen.Home.route) {
+                    navController.navigate(Screen.OnboardingPhoto.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        // Onboarding: se muestra una única vez, justo después de crear la
+        // cuenta. "Saltar" y "Comenzar" limpian todo el stack de onboarding
+        // (popUpTo OnboardingPhoto inclusive) para que "atrás" desde Home
+        // cierre la app en vez de reabrir estas pantallas.
+        composable(Screen.OnboardingPhoto.route) {
+            OnboardingPhotoScreen(
+                onNext = { navController.navigate(Screen.OnboardingMethod.route) },
+                onSkip = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.OnboardingPhoto.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(Screen.OnboardingMethod.route) {
+            OnboardingMethodScreen(
+                onBack = { navController.popBackStack() },
+                onNext = { navController.navigate(Screen.OnboardingTeaching.route) },
+                onSkip = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.OnboardingPhoto.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(Screen.OnboardingTeaching.route) {
+            OnboardingTeachingScreen(
+                onBack = { navController.popBackStack() },
+                onStart = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.OnboardingPhoto.route) { inclusive = true }
                     }
                 }
             )

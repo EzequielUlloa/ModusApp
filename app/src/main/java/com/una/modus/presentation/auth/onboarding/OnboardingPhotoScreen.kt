@@ -39,7 +39,7 @@ import com.una.modus.ui.theme.ModusTextMuted
  * fue visto ni depende de ninguna capa de dominio/datos todavía.
  *
  * @param onNext se invoca al presionar "Siguiente"; lleva a [OnboardingMethodScreen].
- * @param onSkip se invoca al presionar "Saltar", saltando directo a Login.
+ * @param onSkip se invoca al presionar "Saltar", saltando directo a Home.
  */
 @Composable
 fun OnboardingPhotoScreen(
