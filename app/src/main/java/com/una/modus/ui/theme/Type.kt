@@ -6,7 +6,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
+/**
+ * Tipografía de la app
+ *
+ * Define los estilos de texto de Material 3. Usa la fuente del sistema
+ * (Roboto) en vez de la Inter del diseño de Figma: se decidió priorizar
+ * cero dependencias/assets nuevos sobre la fidelidad tipográfica exacta.
+ */
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
