@@ -104,6 +104,11 @@ fun LoginScreen(
                 .matches() ->
                 "Ingresá un correo válido."
 
+            !email.trim()
+                .lowercase()
+                .endsWith("@est.una.ac.cr") ->
+                "Debés utilizar tu correo institucional @est.una.ac.cr"
+
             else -> null
         }
 
@@ -112,8 +117,8 @@ fun LoginScreen(
             password.isBlank() ->
                 "La contraseña es obligatoria."
 
-            password.length < 6 ->
-                "La contraseña debe tener al menos 6 caracteres."
+            password.length < 8 ->
+                "La contraseña debe tener al menos 8 caracteres."
 
             else -> null
         }
