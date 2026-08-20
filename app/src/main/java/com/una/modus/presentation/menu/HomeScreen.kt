@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.una.modus.presentation.common.components.BottomNavDestination
@@ -25,6 +26,7 @@ import com.una.modus.presentation.common.components.CourseProgressRing
 import com.una.modus.presentation.common.components.ListRowCard
 import com.una.modus.presentation.common.components.ModusBottomNavBar
 import com.una.modus.ui.theme.AvatarStyle
+import com.una.modus.ui.theme.ModusAppTheme
 import com.una.modus.ui.theme.ModusAvatarBlue
 import com.una.modus.ui.theme.ModusAvatarOrange
 import com.una.modus.ui.theme.ModusAvatarTeal
@@ -150,5 +152,13 @@ fun HomeScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeScreenPreview() {
+    ModusAppTheme {
+        HomeScreen()
     }
 }

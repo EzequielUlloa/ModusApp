@@ -14,7 +14,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.una.modus.presentation.auth.login.AccountCreatedScreen
 import com.una.modus.presentation.common.components.BottomNavDestination
 import com.una.modus.presentation.common.components.ModusBottomNavBar
 import com.una.modus.ui.theme.ModusAppTheme
