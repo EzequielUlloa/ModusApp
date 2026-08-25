@@ -121,6 +121,15 @@ val ModusAccentGradientEnd = Color(0xFF3FCB74)
 val ModusOnAccent = Color(0xFF0B1A11)
 
 /**
+ * Tokens de error
+ *
+ * Extraídos de "25 · Sin conexión" en Figma (`color/danger` y
+ * `color/dangersoft`), usados en [com.una.modus.presentation.common.components.ErrorStateView].
+ */
+val ModusDanger = Color(0xFFB3261E)
+val ModusDangerSoft = Color(0xFFF9DEDC)
+
+/**
  * Paleta Modus · Onboarding
  *
  * Tokens adicionales extraídos de la sección "OSCURO · Onboarding" de

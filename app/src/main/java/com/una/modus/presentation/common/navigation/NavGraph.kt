@@ -3,9 +3,11 @@ package com.una.modus.presentation.common.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.una.modus.presentation.auth.login.AccountCreatedScreen
 import com.una.modus.presentation.auth.login.ForgotPasswordScreen
 import com.una.modus.presentation.auth.login.LoginScreen
@@ -17,7 +19,9 @@ import com.una.modus.presentation.auth.onboarding.OnboardingPhotoScreen
 import com.una.modus.presentation.auth.onboarding.OnboardingTeachingScreen
 import com.una.modus.presentation.common.SplashScreen
 import com.una.modus.presentation.lists.CursosScreen
+import com.una.modus.presentation.lists.ElegirCursoScreen
 import com.una.modus.presentation.lists.GenericListScreen
+import com.una.modus.presentation.lists.HistorialScreen
 import com.una.modus.presentation.menu.AvisosScreen
 import com.una.modus.presentation.menu.HomeScreen
 import com.una.modus.presentation.menu.PerfilScreen
@@ -46,6 +50,10 @@ sealed class Screen(val route: String) {
     data object Avisos : Screen("avisos")
     data object Perfil : Screen("perfil")
     data object GenericList : Screen("list")
+    data object ElegirCurso : Screen("elegir_curso")
+    data object Historial : Screen("historial/{cursoId}") {
+        fun route(cursoId: String) = "historial/$cursoId"
+    }
 }
 
 /**
@@ -192,8 +200,8 @@ fun ModusNavGraph(
                 onNavigateCursos = { navigateToTab(Screen.Cursos.route) },
                 onNavigateAvisos = { navigateToTab(Screen.Avisos.route) },
                 onNavigatePerfil = { navigateToTab(Screen.Perfil.route) },
-                onCapturar = { navController.navigate(Screen.GenericList.route) },
-                onCourseClick = { navController.navigate(Screen.GenericList.route) }
+                onCapturar = { navController.navigate(Screen.ElegirCurso.route) },
+                onCourseClick = { cursoId -> navController.navigate(Screen.Historial.route(cursoId)) }
             )
         }
         composable(Screen.Cursos.route) {
@@ -201,7 +209,9 @@ fun ModusNavGraph(
                 onNavigateInicio = { navigateToTab(Screen.Home.route) },
                 onNavigateAvisos = { navigateToTab(Screen.Avisos.route) },
                 onNavigatePerfil = { navigateToTab(Screen.Perfil.route) },
-                onCapturar = { navController.navigate(Screen.GenericList.route) }
+                onCapturar = { navController.navigate(Screen.ElegirCurso.route) },
+                onCourseClick = { cursoId -> navController.navigate(Screen.Historial.route(cursoId)) },
+                onAddCourse = { navController.navigate(Screen.GenericList.route) }
             )
         }
         composable(Screen.Avisos.route) {
@@ -209,7 +219,7 @@ fun ModusNavGraph(
                 onNavigateInicio = { navigateToTab(Screen.Home.route) },
                 onNavigateCursos = { navigateToTab(Screen.Cursos.route) },
                 onNavigatePerfil = { navigateToTab(Screen.Perfil.route) },
-                onCapturar = { navController.navigate(Screen.GenericList.route) }
+                onCapturar = { navController.navigate(Screen.ElegirCurso.route) }
             )
         }
         composable(Screen.Perfil.route) {
@@ -223,7 +233,37 @@ fun ModusNavGraph(
                 onNavigateInicio = { navigateToTab(Screen.Home.route) },
                 onNavigateCursos = { navigateToTab(Screen.Cursos.route) },
                 onNavigateAvisos = { navigateToTab(Screen.Avisos.route) },
-                onCapturar = { navController.navigate(Screen.GenericList.route) }
+                onCapturar = { navController.navigate(Screen.ElegirCurso.route) }
+            )
+        }
+        // Elegir curso: paso previo a capturar, alcanzado desde el botón
+        // flotante de cámara de cualquier pestaña. "Continuar" y "Otro
+        // curso" quedan apuntando al placeholder de captura hasta que ese
+        // flujo (05 · Captura de apunte) se implemente.
+        composable(Screen.ElegirCurso.route) {
+            ElegirCursoScreen(
+                onBack = { navController.popBackStack() },
+                onContinuar = { navController.navigate(Screen.GenericList.route) },
+                onOtroCurso = { navController.navigate(Screen.GenericList.route) }
+            )
+        }
+        // Historial de apuntes: se llega tocando un curso desde Home o la
+        // pestaña Cursos. El detalle de cada apunte (16 · Detalle de
+        // apunte) todavía no existe, así que su fila navega al placeholder.
+        composable(
+            route = Screen.Historial.route,
+            arguments = listOf(navArgument("cursoId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val cursoId = backStackEntry.arguments?.getString("cursoId").orEmpty()
+            HistorialScreen(
+                cursoId = cursoId,
+                onBack = { navController.popBackStack() },
+                onApunteClick = { navController.navigate(Screen.GenericList.route) },
+                onNavigateInicio = { navigateToTab(Screen.Home.route) },
+                onNavigateCursos = { navigateToTab(Screen.Cursos.route) },
+                onNavigateAvisos = { navigateToTab(Screen.Avisos.route) },
+                onNavigatePerfil = { navigateToTab(Screen.Perfil.route) },
+                onCapturar = { navController.navigate(Screen.ElegirCurso.route) }
             )
         }
         composable(Screen.GenericList.route) {
