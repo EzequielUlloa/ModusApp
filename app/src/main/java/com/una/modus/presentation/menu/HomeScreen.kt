@@ -11,67 +11,66 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.una.modus.data.repository.FakeCursoRepository
+import com.una.modus.domain.model.Curso
+import com.una.modus.domain.usecase.GetCursosUseCase
 import com.una.modus.presentation.common.components.BottomNavDestination
 import com.una.modus.presentation.common.components.CourseProgressRing
 import com.una.modus.presentation.common.components.ListRowCard
 import com.una.modus.presentation.common.components.ModusBottomNavBar
-import com.una.modus.ui.theme.AvatarStyle
-import com.una.modus.ui.theme.ModusAvatarBlue
-import com.una.modus.ui.theme.ModusAvatarOrange
-import com.una.modus.ui.theme.ModusAvatarTeal
+import com.una.modus.presentation.common.components.avatarStyleForIndex
+import com.una.modus.presentation.common.state.UiState
 import com.una.modus.ui.theme.ModusBackgroundGradient
 import com.una.modus.ui.theme.ModusButtonGradient
 import com.una.modus.ui.theme.ModusOnPrimary
+import com.una.modus.ui.theme.ModusPrimaryText
 import com.una.modus.ui.theme.ModusText
 import com.una.modus.ui.theme.ModusTextMuted
-
-/** Curso de muestra mostrado en "Tus cursos" del Home. */
-private data class HomeCourse(
-    val code: String,
-    val name: String,
-    val professor: String,
-    val notesCount: Int,
-    val progress: Int,
-    val avatarStyle: AvatarStyle
-)
 
 /**
  * Pantalla de inicio (Home)
  *
  * Destino al que llega el usuario tras completar el login o el registro.
  * Muestra el saludo, el acceso directo a "Analizar un apunte nuevo" y la
- * lista de cursos activos, con la barra de navegación inferior fija.
- *
- * Los cursos son datos de muestra: la capa real (GetCursosUseCase) es
- * responsabilidad del Frente 3 y debe reemplazar este `remember` cuando
- * exista.
+ * lista de cursos activos (vía [GetCursosUseCase], con su propio estado
+ * de carga), con la barra de navegación inferior fija.
  */
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     userName: String = "Josué",
+    getCursosUseCase: GetCursosUseCase = remember { GetCursosUseCase(FakeCursoRepository()) },
     onNavigateCursos: () -> Unit = {},
     onNavigateAvisos: () -> Unit = {},
     onNavigatePerfil: () -> Unit = {},
     onCapturar: () -> Unit = {},
     onCourseClick: (String) -> Unit = {}
 ) {
-    val courses = remember {
-        listOf(
-            HomeCourse("CI", "Cálculo I", "Prof. R. León", 12, 78, ModusAvatarTeal),
-            HomeCourse("FG", "Física General", "Prof. M. Guzmán", 8, 64, ModusAvatarBlue),
-            HomeCourse("BD", "Bases de Datos", "Prof. A. Solano", 5, 41, ModusAvatarOrange)
-        )
+    var state by remember { mutableStateOf<UiState<List<Curso>>>(UiState.Loading) }
+
+    LaunchedEffect(Unit) {
+        state = try {
+            val cursos = getCursosUseCase()
+            if (cursos.isEmpty()) UiState.Empty else UiState.Success(cursos)
+        } catch (e: Exception) {
+            UiState.Error(e.message ?: "No pudimos cargar tus cursos.")
+        }
     }
+    val cursosActivos = (state as? UiState.Success)?.data.orEmpty()
 
     Box(
         modifier = modifier
@@ -88,7 +87,7 @@ fun HomeScreen(
         ) {
             Text(text = "Hola, $userName", color = ModusText, fontSize = 30.sp, fontWeight = FontWeight.SemiBold)
             Text(
-                text = "II Ciclo 2026 · ${courses.size} cursos activos",
+                text = "II Ciclo 2026 · ${cursosActivos.size} cursos activos",
                 color = ModusTextMuted,
                 fontSize = 12.5.sp
             )
@@ -123,14 +122,31 @@ fun HomeScreen(
                 letterSpacing = 1.1.sp
             )
 
-            courses.forEach { course ->
+            when (state) {
+                is UiState.Loading -> Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = ModusPrimaryText)
+                }
+                is UiState.Empty -> Text(
+                    text = "Todavía no tenés cursos. Agregá uno desde la pestaña Cursos.",
+                    color = ModusTextMuted,
+                    fontSize = 12.5.sp
+                )
+                is UiState.Error -> Text(
+                    text = "No pudimos cargar tus cursos ahora mismo.",
+                    color = ModusTextMuted,
+                    fontSize = 12.5.sp
+                )
+                is UiState.Success -> Unit
+            }
+
+            cursosActivos.forEachIndexed { index, curso ->
                 ListRowCard(
-                    title = course.name,
-                    subtitle = "${course.professor} · ${course.notesCount} apuntes",
-                    avatarStyle = course.avatarStyle,
-                    avatarLabel = course.code,
-                    onClick = { onCourseClick(course.code) },
-                    trailing = { CourseProgressRing(progress = course.progress) }
+                    title = curso.nombre,
+                    subtitle = "${curso.profesor} · ${curso.cantidadApuntes} apuntes",
+                    avatarStyle = avatarStyleForIndex(index),
+                    avatarLabel = curso.codigo,
+                    onClick = { onCourseClick(curso.id) },
+                    trailing = { CourseProgressRing(progress = curso.progreso) }
                 )
             }
         }

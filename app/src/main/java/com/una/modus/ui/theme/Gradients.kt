@@ -68,3 +68,13 @@ val ModusAvatarPurple = AvatarStyle(
     gradient = Brush.linearGradient(listOf(Color(0xFFC3A9FF), Color(0xFF8B6CF7))),
     onColor = Color(0xFF160E33)
 )
+
+/**
+ * Avatar oscuro sólido usado en las filas de Historial: representa la
+ * miniatura de la hoja capturada (ícono de documento sobre fondo oscuro),
+ * a diferencia de los avatares con iniciales de curso.
+ */
+val ModusAvatarDark = AvatarStyle(
+    gradient = Brush.linearGradient(listOf(Color(0xFF0D1410), Color(0xFF0D1410))),
+    onColor = Color(0xFFE9E5D9)
+)
