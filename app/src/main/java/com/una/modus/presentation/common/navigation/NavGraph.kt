@@ -227,7 +227,7 @@ fun ModusNavGraph(
             )
         }
         composable(Screen.GenericList.route) {
-            GenericListScreen()
+            GenericListScreen(onBack = { navController.popBackStack() })
         }
     }
 }

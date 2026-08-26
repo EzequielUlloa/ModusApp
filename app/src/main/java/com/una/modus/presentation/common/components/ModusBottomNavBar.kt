@@ -68,7 +68,7 @@ fun ModusBottomNavBar(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(100.dp))
                 .background(ModusSurface)
-                .padding(vertical = 18.dp),
+                .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavItem(
@@ -100,14 +100,19 @@ fun ModusBottomNavBar(
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = (-18).dp)
-                .size(60.dp)
+                .offset(y = (-14).dp)
+                .size(68.dp)
                 .clip(CircleShape)
                 .background(ModusButtonGradient)
                 .clickable(onClick = onCapturar),
             contentAlignment = Alignment.Center
         ) {
-            Icon(imageVector = Icons.Filled.PhotoCamera, contentDescription = "Capturar apunte", tint = ModusOnPrimary)
+            Icon(
+                imageVector = Icons.Filled.PhotoCamera,
+                contentDescription = "Capturar apunte",
+                tint = ModusOnPrimary,
+                modifier = Modifier.size(28.dp)
+            )
         }
     }
 }
@@ -123,15 +128,13 @@ private fun NavItem(
     val color = if (selected) ModusPrimaryText else ModusTextMuted
     val interactionSource = remember { MutableInteractionSource() }
     Column(
-        modifier = modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            )
-            .padding(vertical = 4.dp),
+        modifier = modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onClick = onClick
+        ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Box(
             modifier = Modifier
@@ -141,7 +144,7 @@ private fun NavItem(
                 .indication(interactionSource, ripple(bounded = true, radius = 17.dp)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(imageVector = icon, contentDescription = label, tint = color, modifier = Modifier.size(20.dp))
+            Icon(imageVector = icon, contentDescription = label, tint = color, modifier = Modifier.size(26.dp))
         }
         Text(
             text = label,
